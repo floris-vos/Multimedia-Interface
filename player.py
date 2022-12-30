@@ -31,13 +31,13 @@ media_qualities = [
 
 query_index = 0; timescale_var =0
 play_index=-1
-playlist_index = 0
 volume_var= 100
 query_list = []; playlist = []
 win.title("Youtube Player")
 instance = vlc.Instance('--no-xlib -q > /dev/null 2>&1')
 player = instance.media_player_new() 
 
+#sending the entry variable for a youtube search
 def query_songs(event):
     playlist_frame.focus_set()
     global query_index, query_list
@@ -90,6 +90,7 @@ def update_currently_playing(TITLE):
     currently_playing.config(state="disable")
     return
 
+#update the song description
 def update_description_label(description):
     description_label.config(state="normal")
     description_label.delete(0, END)
@@ -128,9 +129,12 @@ def update_time():
 def delete_quality_menu():
     for i in media_qualities:
         try:
-            current_quality_menu.delete(i)
+            current_quality_menu.delete(f"audio only ({i})")
         except:
-            continue
+            try:
+                current_quality_menu.delete(f"video ({i})")
+            except:
+                continue
     return
 
 #this is to generate a list of stream URLs from a youtube URL
