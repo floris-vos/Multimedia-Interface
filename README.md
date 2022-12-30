@@ -1,4 +1,7 @@
 # gui-youtube-player
+![Screenshot from 2022-12-30 14-09-37](https://user-images.githubusercontent.com/121669504/210073639-b2aad203-f4db-4743-a6be-03c64ebf874c.png)
+
+
 a simple gui for making youtube queries, playing audio and/or video streams, and making and playing playlists
 
  This is a youtube player with a graphic user interface. 
@@ -42,8 +45,11 @@ save playlist, to save the current playlist to a csv file. the name of this play
 submenu: playlists, to browse through saved playlist and import one of choice.
 
 
+
 In the quality menu, you can set the sound quality. 
 
 In the submenu prefered quality, you can give an indication of what quality you generally prefer. 
 
 In the submenu current song quality, you can browse through the available formats for the current song. The choice will saved and used as your prefered choice of quality.
+
+Made with help from many, including Bruno Vermeulen on Stackoverflow: https://codereview.stackexchange.com/questions/282051/a-gui-youtube-audio-player
