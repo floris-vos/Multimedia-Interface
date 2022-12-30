@@ -75,6 +75,7 @@ def query_next():
             query_index = 0
         update_query_title()
 
+#update the title of the query list
 def update_query_title():
     song_query.config(state="normal")
     song_query.delete(0, END)
@@ -82,7 +83,7 @@ def update_query_title():
     song_query.config(state="disable")
     return
 
-#moving through the songlist
+#updating the title of the currently playing song
 def update_currently_playing(TITLE):
     currently_playing.config(state="normal")
     currently_playing.delete(0, END)
@@ -90,6 +91,14 @@ def update_currently_playing(TITLE):
     currently_playing.config(state="disable")
     return
 
+def update_description_label(description):
+    description_label.config(state="normal")
+    description_label.delete(0, END)
+    description_label.insert(0, str(description))
+    description_label.config(state="disable")
+    return
+
+#update the title of the playlist
 def update_playlist_title():
     playlist_item.config(state="normal")
     playlist_item.delete(0, END)
@@ -116,12 +125,17 @@ def update_time():
         timescale.set(place)
     win.after(1000,update_time)
 
-def generate_stream_url(URL):
+#to delete the old items in the song quality menu
+def delete_quality_menu():
     for i in media_qualities:
         try:
             current_quality_menu.delete(i)
         except:
             continue
+    return
+
+#this is to generate a list of stream URLs from a youtube URL
+def generate_stream_url(URL):
     audio = []
     ydl_opts = {"quiet":True }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -154,6 +168,7 @@ def generate_stream_url(URL):
     prefered_quality_menu.entryconfigure(2, command=(lambda url = url_list[0]['stream_url']:  set_player(url)))
     return(url_list, songduration, description, songtitle)
 
+#getting the stream with the desired quality
 def select_stream(audio):
     break_out_flag = False
     for index in range(prefered_quality):
@@ -166,6 +181,7 @@ def select_stream(audio):
                 break
     return(url)
 
+#putting the media to the player
 def set_player(playurl,quality_wish=""):
     global prefered_quality
     if quality_wish!="":
@@ -177,21 +193,19 @@ def set_player(playurl,quality_wish=""):
     player.play()
     player.set_time(time)
     
-#starting the song
+#setting up the new song
 def start_new_song(URL):
     if query_list or playlist:
+        delete_quality_menu()
         audio, songduration, description, songtitle = generate_stream_url(URL)
         playurl = select_stream(audio)
         set_player(playurl) 
-        description_label.config(state="normal")
-        description_label.delete(0, END)
-        description_label.insert(0, str(description))
-        description_label.config(state="disable")
         pause_button.config(text="||")
         timescale.config(to = songduration)
         timescale.set(0)
         player.set_time(0)
         win.title(songtitle)
+        update_description_label(description)
         update_currently_playing(songtitle)
         update_playlist_title()
         return
@@ -220,6 +234,7 @@ def download():
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(YOUTUBE_BASE_URL+ song_url, download=True) 
 
+#this is to select a random song from the playlist
 def random():
     global play_index
     counttemp = play_index
@@ -272,13 +287,15 @@ def save_playlist():
             f_object.close()
         playlist_list_menu.add_command(label=name, command=(lambda playlistt = playlist:  import_playlist(playlistt)))
 
+#for browsing through the playlist
 def playlist_next():
     if playlist:
         global play_index
-        if play_index < (len(playlist)-1):
+        if play_index < (len(playlist)-2):
             play_index+=1
         update_playlist_title()
 
+#for browsing through the playlist
 def playlist_prev():
     if playlist:
         global play_index
@@ -287,12 +304,14 @@ def playlist_prev():
         update_playlist_title()
         return
 
+#for removing item from playlist
 def playlist_remove():
     if playlist:
         del playlist[play_index+1]
         playlist_prev()
         update_playlist_title()
 
+#for selecting song from playlist
 def playlist_go():
     if playlist:
         global play_index
@@ -300,28 +319,33 @@ def playlist_go():
             play_index+=1
             start_new_song(playlist[play_index]['url'])
 
+#for importing a playlist
 def import_playlist(playlist_import):
     global playlist, play_index
     playlist = playlist_import
     play_index = 0
     start_new_song(playlist[play_index]['url'])
 
+#turning shuffle on and off
 def toggle_shuffle():
     global shuffle
     shuffle = not(shuffle)
     on_or_off = ["on","off"][int(shuffle)]
     playlist_menu.entryconfigure(0, label=f"turn {on_or_off} shuffle")
 
+#selecting prefered quality as best video
 def set_prefered_quality_best_vid():
     global prefered_quality
     prefered_quality=10
     if player.get_time() > 1000:
         select_stream
 
+#selecting prefered quality as best audio
 def set_prefered_quality_best_aud():
     global prefered_quality
     prefered_quality=2
 
+#selecting prefered quality as least audio
 def set_prefered_quality_least_aud():
     global prefered_quality
     prefered_quality=0
