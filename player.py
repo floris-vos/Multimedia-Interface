@@ -9,7 +9,6 @@ win.geometry("500x150")
 def quit():
     win.after(500,win.destroy)
 win.protocol('WM_DELETE_WINDOW', quit)
-MAX_SONG_LENGTH = 300
 YOUTUBE_BASE_URL = 'https://www.youtube.com'
 NON_CHARS = r'[^a-zA-Z0-9 .,:;+-=!?/()öäßü]'
 
