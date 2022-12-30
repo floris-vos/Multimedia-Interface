@@ -1,5 +1,3 @@
-
-#! /usr/bin/python3
 from tkinter import (
     Tk, Menu, Frame, Label, Button, Scale, BOTH, Entry, DISABLED, END,NORMAL,StringVar, HORIZONTAL, VERTICAL, Text
 )
@@ -199,13 +197,13 @@ def start_new_song(URL):
         return
 
 #this is to select the next song in the list
-def AddSong():
+def add_song():
     if query_list:
         playlist.append(query_list[query_index])
         update_playlist_title()
 
 #this function is for downloading the song
-def Download():
+def download():
     song_url = query_list[query_index]['url']
     song_title = query_list[query_index]['title']
     outtmpl = song_title + '.%(ext)s'
@@ -365,7 +363,8 @@ button_dict = [
     Button(search_frame, text = "←",command = query_prev),
     Button(search_frame, text = "→",command = query_next),
     Button(search_frame, text = "OK", command =(lambda:  start_new_song(query_list[query_index]['url']))),
-    Button(search_frame, text = "+", command = AddSong)
+    Button(search_frame, text = "+", command = add_song),
+    Button(search_frame, text = "↓", command =download)
     ]
 for button in button_dict:
     button.pack(side='left')
