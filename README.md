@@ -1,55 +1,18 @@
 # gui-youtube-player
 ![Screenshot from 2022-12-30 14-09-37](https://user-images.githubusercontent.com/121669504/210073639-b2aad203-f4db-4743-a6be-03c64ebf874c.png)
 
+This is a multimedia player that gets its material from the database of www.youtube.com. 
+It can play audio only (the original concept of this program), but can play video as well. 
+Selecting such preferences happens under the menu „quality“.
+It‘s also possible to make playlists, which can be saved in a csv file. 
 
-a simple gui for making youtube queries, playing audio and/or video streams, and making and playing playlists
+The code as it is now is – I think – a pretty good base for further development. Points of which I know that they need development are:
+-the csv module („filehandler“). The functions are very inefficient and complex. They could be reduced to just a reader and a writer, and in between some manipulation that just works on the material that has been read. 
+-more generally, the work with importing and exporting playlists has been made a bit sloppily. 
 
- This is a youtube player with a graphic user interface. 
-  There's a searchbox where you can enter your query. Results are fetched after pressing Enter.
-  The results are put in a list, through which you can browse using arrow keys. 
-  
-  To play a song, you press the "OK" button. 
-  
-To add a song to the current playlist, you press the "+" button.
+In coding this, I developped a few principles:
+„one-way-dependancy“: classes should only refer to their functions and atttributes, so that they can be imported anywhere, without being dependant on the class that imports them. 
+„mono-functionality“: classes should have one function only, which can be tested by looking for a singular word (be it a neologism) to describe the function of the class. 
+„terminological homogenity“: more of a pedantic thing, but for this project I tried to find terms that all have a Latin etymology, to give descriptions to objects. 
 
-To download the currently highlighted item of the query list, press the "↓" button.
-
-The currently playing song is shown in the box next to the searchbox.
-
-The next item of the playlist is shown in the box next to the search result list.
-
-You can browse throught the items in the playlist with the arrow keys underneath the next playlist item.
-
-You  can remove a song from the playlist with the "x" button.
-
-You can activate the currently highlighted song of the playlist with the second "OK" button.
-
-The scale underneath shows the progress bar of the time of the song. You can move it.
-
-The scale to the right is for volume. The initial value is 100%.
-
-The window at the bottom of the screen shows the youtube-description of the song. 
-
-
-In the playlist menu, you have the following options:
-
-
-toggle shuffle, to make the playlist play in random order.
-
-all results to playlist, to put all the results of the query in the playlist.
-
-clear playlist, to clear all items from the playlist.
-
-save playlist, to save the current playlist to a csv file. the name of this playlist will be the text in the searchbox.
-
-submenu: playlists, to browse through saved playlist and import one of choice.
-
-
-
-In the quality menu, you can set the sound quality. 
-
-In the submenu prefered quality, you can give an indication of what quality you generally prefer. 
-
-In the submenu current song quality, you can browse through the available formats for the current song. The choice will saved and used as your prefered choice of quality.
-
-Made with help from many, including Bruno Vermeulen on Stackoverflow: https://codereview.stackexchange.com/questions/282051/a-gui-youtube-audio-player
+I didn‘t keep my own rules 100%, but know I could correct a few things to change that. And I think that these rules are a good precondition for readable and usable code. 
