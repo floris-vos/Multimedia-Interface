@@ -35,8 +35,6 @@ else:
 month = f"{datetime.now().month:02d}"
 year = str(datetime.now().year)[-2:]
 
-print(day)
-
 class Gui:
 
     def __init__(self, argument='--no-xlib -q > /dev/null 2>&1'):
