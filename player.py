@@ -35,6 +35,8 @@ else:
 month = f"{datetime.now().month:02d}"
 year = str(datetime.now().year)[-2:]
 
+print(day)
+
 class Gui:
 
     def __init__(self, argument='--no-xlib -q > /dev/null 2>&1'):
@@ -591,7 +593,7 @@ class Gui:
             self.search_results.window_create("end", window=b)
             self.search_results.insert("end",'\n')
         for item in self.inventory:
-            blurb = str(item+"\nPlay Time: "+ self.inventory[item].get("play_time","")+" Channel: "+ self.inventory[item].get("channel", "")  +"\n"+self.inventory[item].get("description","")[:60]+"...")
+            blurb = str(item+"\nPlay Time: "+ self.inventory[item].get("play_time","")+" Channel: "+ self.inventory[item].get("channel", "")  +"\n"+self.inventory[item].get("date","")+" "+self.inventory[item].get("description","")[:60]+"...")
         
             b = Label(self.search_results, text=blurb ,bg=self.pastel_blue, cursor="hand2", width = 60, height=3,borderwidth=2,highlightcolor="black",highlightbackground="black", relief="groove",justify="left", anchor="w")
             if "PLAYLIST" in item:
@@ -759,7 +761,8 @@ class Gui:
         state = self.model.player.get_state()
         if state == state.Playing:
             self.update_time()
-        elif self.autoplay and state == state.NothingSpecial:
+
+        elif self.autoplay and state == state.NothingSpecial or state == state.Ended:
             if self.preloadflag == 1:
                 self.play()
             else:
@@ -979,6 +982,59 @@ class Model:
         return output
 
 
+    def search_tc(self, search_terms):
+        elements = [
+            "imageUrl", "title", "description", "url", "publicationDate", "lastPublishedDate",
+            "category", "name", "isBreaking", "isLive", "duration", "authors"
+            ]
+        elements2 = ["a", "b", "c", "d", "e", "f", "h","i","j","k","l","m","n","A", "B", "C", "D", "E", "F","G",
+        "H", "I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X"]
+        url = "https://www.foxnews.com/person/c/tucker-carlson"
+        try:
+            headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'}
+            resp = request(url, timeout=10, headers=headers).text
+        except:
+            print("exc")
+        index1 = resp.index("items:[") + 6
+        index2 = resp.index("]}]") + 3
+        resp = resp[index1:index2]
+        for item in elements:
+            resp = resp.replace(f"{item}:", f'"{item}":')
+        for item in elements2:
+            resp = resp.replace(f":{item}", f':""')
+        x = loads(resp)
+        result = {}
+        for item in x:
+            if "www.foxnews.com" not in item["url"]:
+                url =  "http://www.foxnews.com" + item["url"]
+            else:
+                url = item["url"]
+            result[item["title"]] = {
+            "title": item["title"],
+            "url": unquote(url),
+            "description": item["description"],
+            "play_time": item["duration"]
+            }
+        return result
+
+    def collect_tc(self, url):
+
+        try:
+            headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'}
+            resp = request(url, timeout=10, headers=headers).text
+        except:
+            print("exc")
+        index1 = resp.index('"contentUrl": ')
+        index2 = resp.index('duration', index1)
+        index2 = resp.index(',', index2)
+        x = loads("{"+resp[index1:index2] + "}")
+
+        thing = {"144p": x["contentUrl"],
+            "description": x["description"],
+            "title": x["name"]}
+        return thing
+
+
     def search(self, search_terms: str) -> list:
         encoded_search = quote_plus(search_terms)
         url = f"https://www.youtube.com/results?search_query={encoded_search}"
@@ -1053,7 +1109,7 @@ class Model:
                 title += "I"
             results[title] = {
                 "url": song["clip"]["link"],
-                "play_time": song["clip"]["duration"],
+                "play_time": str(song["clip"]["duration"]),
                 "date": song["clip"]["created_time"][:7],
                 "channel": song["clip"]["user"]["name"],
                 "title": title
